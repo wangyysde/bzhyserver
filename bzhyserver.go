@@ -13,8 +13,8 @@ import (
 	"path"
 	"sync"
 
-	"bzhyserver/bytesconv"
-	"bzhyserver/render"
+	"github.com/wangyysde/bzhyserver/bytesconv"
+	"github.com/wangyysde/bzhyserver/render"
 )
 
 const defaultMultipartMemory = 32 << 20 // 32 MB

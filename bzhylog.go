@@ -1,7 +1,7 @@
 package bzhyserver
 import (
         "strings"
-        "bzhylog"
+        "github.com/wangyysde/bzhylog"
 	"os"
 )
 

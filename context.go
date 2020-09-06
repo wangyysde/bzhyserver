@@ -19,9 +19,9 @@ import (
 	"sync"
 	"time"
 
-	"bzhyserver/sse"
-	"bzhyserver/binding"
-	"bzhyserver/render"
+	"github.com/wangyysde/bzhyserver/sse"
+	"github.com/wangyysde/bzhyserver/binding"
+	"github.com/wangyysde/bzhyserver/render"
 )
 
 // Content-Type MIME of the most common data formats.
