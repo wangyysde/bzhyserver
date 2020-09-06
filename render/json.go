@@ -10,8 +10,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"bzhyserver/bytesconv"
-	"bzhyserver/json"
+	"github.com/wangyysde/bzhyserver/bytesconv"
+	"github.com/wangyysde/bzhyserver/json"
 )
 
 // JSON contains the given interface object.

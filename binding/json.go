@@ -10,7 +10,7 @@ import (
 	"io"
 	"net/http"
 
-	"bzhyserver/json"
+	"github.com/wangyysde/bzhyserver/json"
 )
 
 // EnableDecoderUseNumber is used to call the UseNumber method on the JSON
