@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"bzhyserver/bytesconv"
+	"github.com/wangyysde/bzhyserver/bytesconv"
 )
 
 var (

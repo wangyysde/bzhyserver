@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"sync"
 
-	"bzhyserver/validator"
+	"github.com/wangyysde/bzhyserver/validator"
 )
 
 type defaultValidator struct {

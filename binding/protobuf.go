@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"bzhyserver/proto"
+	"github.com/wangyysde/bzhyserver/proto"
 )
 
 type protobufBinding struct{}

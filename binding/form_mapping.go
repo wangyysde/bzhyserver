@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"bzhyserver/bytesconv"
-	"bzhyserver/json"
+	"github.com/wangyysde/bzhyserver/bytesconv"
+	"github.com/wangyysde/bzhyserver/json"
 )
 
 var errUnknownType = errors.New("unknown type")
