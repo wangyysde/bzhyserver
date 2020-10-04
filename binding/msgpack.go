@@ -11,7 +11,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/wangyysde/bzhyserver/codec"
+	"github.com/wangyysde/bzhycodec"
 )
 
 type msgpackBinding struct{}
