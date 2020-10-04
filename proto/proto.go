@@ -13,10 +13,10 @@
 package proto
 
 import (
-	protoV2 "google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
-	"google.golang.org/protobuf/runtime/protoiface"
-	"google.golang.org/protobuf/runtime/protoimpl"
+	protoV2 "github.com/wangyysde/bzhyprotobuf/proto"
+	"github.com/wangyysde/bzhyprotobuf/reflect/protoreflect"
+	"github.com/wangyysde/bzhyprotobuf/runtime/protoiface"
+	"github.com/wangyysde/bzhyprotobuf/runtime/protoimpl"
 )
 
 const (

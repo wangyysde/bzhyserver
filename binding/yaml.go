@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/wangyysde/bzhyserver/yaml.v2"
+	"github.com/wangyysde/bzhyyaml"
 )
 
 type yamlBinding struct{}

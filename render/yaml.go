@@ -7,7 +7,7 @@ package render
 import (
 	"net/http"
 
-	"gopkg.in/yaml.v2"
+	"github.com/wangyysde/bzhyyaml"
 )
 
 // YAML contains the given interface object.

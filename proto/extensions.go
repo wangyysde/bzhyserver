@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"reflect"
 
-	"google.golang.org/protobuf/encoding/protowire"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
-	"google.golang.org/protobuf/reflect/protoregistry"
-	"google.golang.org/protobuf/runtime/protoiface"
-	"google.golang.org/protobuf/runtime/protoimpl"
+	"github.com/wangyysde/bzhyprotobuf/encoding/protowire"
+	"github.com/wangyysde/bzhyprotobuf/proto"
+	"github.com/wangyysde/bzhyprotobuf/reflect/protoreflect"
+	"github.com/wangyysde/bzhyprotobuf/reflect/protoregistry"
+	"github.com/wangyysde/bzhyprotobuf/runtime/protoiface"
+	"github.com/wangyysde/bzhyprotobuf/runtime/protoimpl"
 )
 
 type (
