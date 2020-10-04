@@ -7,10 +7,10 @@ package proto_test
 import (
 	"testing"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/wangyysde/bzhyprotobuf/proto"
 
-	pb2 "github.com/golang/protobuf/internal/testprotos/proto2_proto"
-	pb3 "github.com/golang/protobuf/internal/testprotos/proto3_proto"
+	pb2 "github.com/wangyysde/bzhyprotobuf/internal/testprotos/proto2_proto"
+	pb3 "github.com/wangyysde/bzhyprotobuf/internal/testprotos/proto3_proto"
 )
 
 var cloneTestMessage = &pb2.MyMessage{

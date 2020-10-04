@@ -9,7 +9,7 @@ package render
 import (
 	"net/http"
 
-	"github.com/ugorji/go/codec"
+	"github.com/wangyysde/bzhycodec"
 )
 
 var (

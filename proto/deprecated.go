@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"strconv"
 
-	protoV2 "google.golang.org/protobuf/proto"
+	protoV2 "github.com/wangyysde/bzhyprotobuf/proto"
 )
 
 var (
