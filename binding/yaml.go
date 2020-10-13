@@ -27,7 +27,7 @@ func (yamlBinding) BindBody(body []byte, obj interface{}) error {
 }
 
 func decodeYAML(r io.Reader, obj interface{}) error {
-	decoder := yaml.NewDecoder(r)
+	decoder := bzhyyaml.NewDecoder(r)
 	if err := decoder.Decode(obj); err != nil {
 		return err
 	}

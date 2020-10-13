@@ -21,7 +21,7 @@ var yamlContentType = []string{"application/x-yaml; charset=utf-8"}
 func (r YAML) Render(w http.ResponseWriter) error {
 	r.WriteContentType(w)
 
-	bytes, err := yaml.Marshal(r.Data)
+	bytes, err := bzhyyaml.Marshal(r.Data)
 	if err != nil {
 		return err
 	}
