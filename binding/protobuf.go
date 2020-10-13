@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/wangyysde/bzhyserver/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type protobufBinding struct{}
