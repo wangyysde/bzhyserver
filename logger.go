@@ -186,9 +186,9 @@ func ErrorLoggerT(typ ErrorType) HandlerFunc {
 // The following have been commented by Wayne Wang on Oct 22 2020 for redefined Logger func in bzhylog.go
 //
 //
-//func Logger() HandlerFunc {
-//	return LoggerWithConfig(LoggerConfig{})
-//}
+func Logger() HandlerFunc {
+	return LoggerWithConfig(LoggerConfig{})
+}
 
 // LoggerWithFormatter instance a Logger middleware with the specified log format function.
 func LoggerWithFormatter(f LogFormatter) HandlerFunc {
