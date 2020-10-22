@@ -24,14 +24,6 @@ var (
 	default405Body = []byte("405 method not allowed")
 )
 
-type HandlerLogFunc func(logmsg string, loglevel string) 
-
-var (
-  AccessLogPrintFunc HandlerLogFunc =  WriteLog2Stdout
-  ErrorLogPrintFunc HandlerLogFunc =  WriteLog2Stdout
-)
-
-
 var defaultAppEngine bool
 
 // HandlerFunc defines the handler used by gin middleware as return value.
@@ -516,14 +508,4 @@ func redirectRequest(c *Context) {
 	c.writermem.WriteHeaderNow()
 }
 
-func SetAccLogHandler(f HandlerLogFunc){
-	if f != nil {
-		AccessLogPrintFunc = f 
-	}
-}
 
-func SetErrLogHandler(f HandlerLogFunc){
-	if f != nil {
-		ErrorLogPrintFunc = f
-	}
-}	

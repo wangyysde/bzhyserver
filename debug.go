@@ -28,9 +28,9 @@ func debugPrintRoute(httpMethod, absolutePath string, handlers HandlersChain) {
 		nuHandlers := len(handlers)
 		handlerName := nameOfFunction(handlers.Last())
 		if DebugPrintRouteFunc == nil {
-			ErrorLogPrintFunc(fmt.Sprintf("%-6s %-25s --> %s (%d handlers)\n", httpMethod, absolutePath, handlerName, nuHandlers),"debug")
+			LogError2StdAndFile(fmt.Sprintf("%-6s %-25s --> %s (%d handlers)\n", httpMethod, absolutePath, handlerName, nuHandlers),"debug")
 		} else {
-			ErrorLogPrintFunc(fmt.Sprintf("%-6s %-25s %s %d handlers",httpMethod, absolutePath, handlerName, nuHandlers),"debug")
+			LogError2StdAndFile(fmt.Sprintf("%-6s %-25s %s %d handlers",httpMethod, absolutePath, handlerName, nuHandlers),"debug")
 		}
 	}
 }
@@ -43,7 +43,7 @@ func debugPrintLoadTemplate(tmpl *template.Template) {
 			buf.WriteString(tmpl.Name())
 			buf.WriteString("\n")
 		}
-		AccessLogPrintFunc(fmt.Sprintf("Loaded HTML Templates (%d): \n%s\n", len(tmpl.Templates()), buf.String()),"info")
+		LogAccess2StdAndFile(fmt.Sprintf("Loaded HTML Templates (%d): \n%s\n", len(tmpl.Templates()), buf.String()),"info")
 	}
 }
 
@@ -52,7 +52,7 @@ func debugPrint(format string, values ...interface{}) {
 		if !strings.HasSuffix(format, "\n") {
 			format += "\n"
 		}
-		ErrorLogPrintFunc(fmt.Sprintf(format, values...),"debug")
+		LogError2StdAndFile(fmt.Sprintf(format, values...),"debug")
 	}
 }
 
@@ -67,19 +67,19 @@ func getMinVer(v string) (uint64, error) {
 
 func debugPrintWARNINGDefault() {
 	if v, e := getMinVer(runtime.Version()); e == nil && v <= ginSupportMinGoVer {
-		ErrorLogPrintFunc("Now bzhyserver requires Go 1.11 or later and Go 1.12 will be required soon.","warn")
+		LogError2StdAndFile("Now bzhyserver requires Go 1.11 or later and Go 1.12 will be required soon.","warn")
 	}
-	ErrorLogPrintFunc("Creating an Engine instance with the Logger and Recovery middleware already attached.","warn")
+	LogError2StdAndFile("Creating an Engine instance with the Logger and Recovery middleware already attached.","warn")
 }
 
 func debugPrintWARNINGNew() {
-	ErrorLogPrintFunc(`Running in "debug" mode. Switch to "release" mode in production.`,"debug")
-	ErrorLogPrintFunc("- using env:	export SERVER_MODE=release","debug")
-	ErrorLogPrintFunc("- using code:	bzhyserver.SetMode(bzhyserver.ReleaseMode)","debug")
+	LogError2StdAndFile(`Running in "debug" mode. Switch to "release" mode in production.`,"debug")
+	LogError2StdAndFile("- using env:	export SERVER_MODE=release","debug")
+	LogError2StdAndFile("- using code:	bzhyserver.SetMode(bzhyserver.ReleaseMode)","debug")
 }
 
 func debugPrintWARNINGSetHTMLTemplate() {
-	ErrorLogPrintFunc(`Since SetHTMLTemplate() is NOT thread-safe. It should only be called
+	LogError2StdAndFile(`Since SetHTMLTemplate() is NOT thread-safe. It should only be called
 at initialization. ie. before any route is registered or the router is listening in a socket:
 
 	router := bzhyserver.Default()
@@ -91,7 +91,7 @@ at initialization. ie. before any route is registered or the router is listening
 func debugPrintError(err error) {
 	if err != nil {
 		if IsDebugging() {
-			ErrorLogPrintFunc(fmt.Sprintf("%v\n",err),"error")
+			LogError2StdAndFile(fmt.Sprintf("%v\n",err),"error")
 		}
 	}
 }
