@@ -59,7 +59,7 @@ type bzhyLoggerConfig struct {
 	Formatter LogFormatter
 }
 
-var LoggerConf bzhyLoggerConfig = bzhyLoggerConfig{nil, nil, nil, nil, nil, nil, nil, nil}
+var LoggerConf bzhyLoggerConfig = bzhyLoggerConfig{"", "", nil, nil, nil, nil, nil, nil}
 
 // defaultLogFormatter is the default log format function Logger middleware uses.
 /*
@@ -102,17 +102,16 @@ func CreateStdLog() {
 
 // Create a new instance of the logger for Access Log.
 func CreateAccLog(AccLogFile string) (ret int) {
-	accLog * bzhylog.Logger
-	err = nil
+	err := nil
 	accFd, err := os.OpenFile(AccLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err == nil {
-		accLog = bzhylog.New()
+		accLog := bzhylog.New()
 		if LoggerConf.AccFd != nil {
-			CloseAcceLogFd()
+			CloseAccLogFd()
 		}
 		LoggerConf.AccLog = accLog
 		LoggerConf.AccFd = accFd
-		defer CloseAcceLogFd()
+		defer CloseAccLogFd()
 	} else {
 		LogError2StdAndFile(fmt.Sprintf("Failed to open the ACCESS log file %s Error message: %s", AccLogFile, err), "fatal")
 		return 200001
@@ -138,11 +137,10 @@ func CloseAccLogFd() (ret int) {
 
 // Create a new instance of the logger for Error Log.
 func CreateErrLog(ErrLogFile string) (ret int) {
-	ErrLog = *bzhylog.Logger
-	err = nil
+	err := nil
 	ErrFd, err := os.OpenFile(ErrLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err == nil {
-		ErrLog = bzhylog.New()
+		ErrLog := bzhylog.New()
 		if LoggerConf.ErrFd != nil {
 			CloseErrLogFd()
 		}
