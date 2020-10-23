@@ -10,7 +10,7 @@ import (
 )
 
 // LogFormatter gives the signature of the formatter function passed to LoggerWithFormatter
-type LogFormatter func(params LogFormatterParams) string
+//type LogFormatter func(params LogFormatterParams) string
 
 /*
 // LogFormatterParams is the structure any formatter will be handed when time to log comes
@@ -40,7 +40,7 @@ type LogFormatterParams struct {
 }
 */
 
-type LoggerConfig struct {
+type bzhyLoggerConfig struct {
 	//The path of access log file
 	AccLogFile string
 	//The path of error log file
@@ -59,9 +59,10 @@ type LoggerConfig struct {
 	Formatter LogFormatter
 }
 
-var LoggerConf LoggerConfig = &LoggerConfig{nil, nil, nil, nil, nil, nil, nil, nil}
+var LoggerConf bzhyLoggerConfig = bzhyLoggerConfig{nil, nil, nil, nil, nil, nil, nil, nil}
 
 // defaultLogFormatter is the default log format function Logger middleware uses.
+/*
 var defaultLogFormatter = func(param LogFormatterParams) string {
 	var statusColor, methodColor, resetColor string
 	if param.IsOutputColor() {
@@ -84,10 +85,11 @@ var defaultLogFormatter = func(param LogFormatterParams) string {
 		param.ErrorMessage,
 	)
 }
+*/
 
 // Create a new instance of the logger for StdOut.
 func CreateStdLog() {
-	StdLog = bzhylog.New()
+	StdLog := bzhylog.New()
 	StdLog.Out = os.Stdout
 	StdLog.SetLevel(bzhylog.TraceLevel)
 	StdLog.SetFormatter(&bzhylog.TextFormatter{
