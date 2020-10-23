@@ -102,7 +102,6 @@ func CreateStdLog() {
 
 // Create a new instance of the logger for Access Log.
 func CreateAccLog(AccLogFile string) (ret int) {
-	err := nil
 	accFd, err := os.OpenFile(AccLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err == nil {
 		accLog := bzhylog.New()
@@ -137,7 +136,6 @@ func CloseAccLogFd() (ret int) {
 
 // Create a new instance of the logger for Error Log.
 func CreateErrLog(ErrLogFile string) (ret int) {
-	err := nil
 	ErrFd, err := os.OpenFile(ErrLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err == nil {
 		ErrLog := bzhylog.New()
@@ -215,7 +213,7 @@ func WriteLog2Acclog(msg string, level string) (ret int) {
 	case "info":
 		LoggerConf.AccLog.Info(msg)
 	case "debug":
-		AccLog.Debug(msg)
+		LoggerConf.AccLog.Debug(msg)
 	case "trace":
 		LoggerConf.AccLog.Trace(msg)
 	default:
@@ -274,13 +272,14 @@ func WriteLog2Errlog(msg string, level string) (ret int) {
 
 // Logger instances a Logger middleware that will write the logs to gin.DefaultWriter.
 // By default gin.DefaultWriter = os.Stdout.
+/*
 func Logger() HandlerFunc {
 	//Initating StdOut Logger
 	if LoggerConf.StdLog == nil {
 		CreateStdLog()
 	}
 
-	if LoggerConf.AccLog == nil && LoggerConf.AccLogFile != nil {
+	if LoggerConf.AccLog == nil && len(LoggerConf.AccLogFile) < 1 {
 		ret := 0
 		ret = CreateAccLog(LoggerConf.AccLogFile)
 		if ret > 0 {
@@ -288,7 +287,7 @@ func Logger() HandlerFunc {
 		}
 	}
 
-	if LoggerConf.ErrLog == nil && LoggerConf.ErrLogFile != nil {
+	if LoggerConf.ErrLog == nil && len(LoggerConf.ErrLogFile) < 1 {
 		ret := 0
 		ret = CreateErrLog(LoggerConf.ErrLogFile)
 		if ret > 0 {
@@ -342,6 +341,7 @@ func Logger() HandlerFunc {
 	}
 
 }
+*/
 
 // Set Access logfile and create Access logger
 func OpenAccessLogger(AccessLogFile string) (ret int) {
@@ -353,7 +353,7 @@ func OpenAccessLogger(AccessLogFile string) (ret int) {
 		}
 	}
 
-	if LoggerConf.AccLogFile != nil && (LoggerConf.AccLog == nil || LoggerConf.AccLog == LoggerConf.StdLog) {
+	if len(LoggerConf.AccLogFile) >0 && (LoggerConf.AccLog == nil || LoggerConf.AccLog == LoggerConf.StdLog) {
 		CreateAccLog(LoggerConf.AccLogFile)
 	}
 
@@ -377,7 +377,7 @@ func OpenErrorLogger(ErrorLogFile string) (ret int) {
 		}
 	}
 
-	if LoggerConf.ErrLogFile != nil && (LoggerConf.ErrLog == nil || LoggerConf.ErrLog == LoggerConf.StdLog) {
+	if len(LoggerConf.ErrLogFile) > 0 && (LoggerConf.ErrLog == nil || LoggerConf.ErrLog == LoggerConf.StdLog) {
 		ret := CreateErrLog(LoggerConf.ErrLogFile)
 	}
 
