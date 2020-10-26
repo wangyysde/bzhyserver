@@ -377,7 +377,7 @@ func OpenErrorLogger(ErrorLogFile string) (ret int) {
 	}
 
 	if len(LoggerConf.ErrLogFile) > 0 && (LoggerConf.ErrLog == nil || LoggerConf.ErrLog == LoggerConf.StdLog) {
-		ret := CreateErrLog(LoggerConf.ErrLogFile)
+		CreateErrLog(LoggerConf.ErrLogFile)
 	}
 
 	if LoggerConf.ErrLog == nil {

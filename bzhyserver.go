@@ -461,7 +461,7 @@ func serveError(c *Context, code int, defaultMessage []byte) {
 		c.writermem.Header()["Content-Type"] = mimePlain
 		_, err := c.Writer.Write(defaultMessage)
 		if err != nil {
-			LogError2StdAndFile((fmt.Sprintf("cannot write message to writer during serve error: %v", err),"debug")
+			LogError2StdAndFile(fmt.Sprintf("cannot write message to writer during serve error: %v", err),"debug")
 			debugPrint("cannot write message to writer during serve error: %v", err)
 		}
 		return
