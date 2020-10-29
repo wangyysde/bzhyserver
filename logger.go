@@ -8,7 +8,6 @@ package bzhyserver
 import (
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"time"
 
@@ -50,10 +49,14 @@ type LoggerConfig struct {
 	SkipPaths []string
 }
 
+/***
+* The following have been commented by Wayne Wang on Oct 26 2020 for moving them into bzhylog.log
+**********
+
+
 // LogFormatter gives the signature of the formatter function passed to LoggerWithFormatter
 type LogFormatter func(params LogFormatterParams) string
 
-// LogFormatterParams is the structure any formatter will be handed when time to log comes
 type LogFormatterParams struct {
 	Request *http.Request
 
@@ -78,6 +81,7 @@ type LogFormatterParams struct {
 	// Keys are the keys set on the request's context.
 	Keys map[string]interface{}
 }
+
 
 // StatusCodeColor is the ANSI color for appropriately logging http status code to a terminal.
 func (p *LogFormatterParams) StatusCodeColor() string {
@@ -128,8 +132,12 @@ func (p *LogFormatterParams) ResetColor() string {
 func (p *LogFormatterParams) IsOutputColor() bool {
 	return consoleColorMode == forceColor || (consoleColorMode == autoColor && p.isTerm)
 }
+*/
 
 // defaultLogFormatter is the default log format function Logger middleware uses.
+/***
+* The following have been commented by Wayne Wang on Oct 26 2020 for moving them into bzhylog.log
+**********
 var defaultLogFormatter = func(param LogFormatterParams) string {
 	var statusColor, methodColor, resetColor string
 	if param.IsOutputColor() {
@@ -152,6 +160,8 @@ var defaultLogFormatter = func(param LogFormatterParams) string {
 		param.ErrorMessage,
 	)
 }
+*/
+
 
 // DisableConsoleColor disables color output in the console.
 func DisableConsoleColor() {
@@ -186,9 +196,9 @@ func ErrorLoggerT(typ ErrorType) HandlerFunc {
 // The following have been commented by Wayne Wang on Oct 22 2020 for redefined Logger func in bzhylog.go
 //
 //
-func Logger() HandlerFunc {
-	return LoggerWithConfig(LoggerConfig{})
-}
+//func Logger() HandlerFunc {
+//	return LoggerWithConfig(LoggerConfig{})
+//}
 
 // LoggerWithFormatter instance a Logger middleware with the specified log format function.
 func LoggerWithFormatter(f LogFormatter) HandlerFunc {
