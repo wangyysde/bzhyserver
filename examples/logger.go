@@ -3,9 +3,11 @@ package main
 import "github.com/wangyysde/bzhyserver"
 
 func main() {
-	bzhyserver.SetAccessFile("/var/log/testAccess.log")
 	bzhyserver.SetErrorFile("/var/log/testError.log")
-	r := bzhyserver.Default()
+    defer bzhyserver.CloseErrLogFd()
+	bzhyserver.SetAccessFile("/var/log/testAccess.log")
+    defer bzhyserver.CloseAccLogFd()
+    r := bzhyserver.Default()
 	r.GET("/ping", func(c *bzhyserver.Context) {
 		c.JSON(200, bzhyserver.H{
 			"message": "pong",
