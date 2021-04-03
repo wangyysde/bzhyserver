@@ -17,7 +17,8 @@
 #    
 
 GO = GO111MODULE=on go
-SERVER_GO_FILES ?= $(wildcard ./src/server/*.go)
+SERVER_GO_FILES ?= $(shell find ./src/server ! -name *_test.go  -name *.go -type f )
+TEST_LOGGER_GO_FILES ?= $(shell find src/logger -name *_test.go  -type f )
 SH_FILES ?= $(shell find ./scripts -name *.sh)
 GOVERSION ?= $(shell go version)
 BUILDTIME ?= $(shell date +'%Y.%m.%d.%H%M%S')
@@ -32,7 +33,7 @@ LDFlags=" \
 "
 include Makefile.common
 
-.PHONY: all server install clean
+.PHONY: all server install clean test_logger
 
 all: server
 
@@ -50,5 +51,4 @@ clean:  ## Clean up intermediate build artifacts.
 	@rm -rf ./bin/*
 	@echo "$(INSTALL_DEST_PATH)"
 #	@rm -rf /usr/local/
-
 
