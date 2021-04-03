@@ -20,7 +20,7 @@
 package logger
 
 import (
-	"github.com/wangyysde/bzhyserver/logger"
+	"github.com/wangyysde/bzhyserver/pkg/logger"
 	"os"
 
 	log "github.com/sirupsen/logrus"
