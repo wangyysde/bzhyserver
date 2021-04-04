@@ -20,49 +20,45 @@
 package logger
 
 import (
-	"github.com/wangyysde/bzhyserver/pkg/logger"
 	"os"
-
-	log "github.com/sirupsen/logrus"
+	"testing"
 )
 
-func Test_logger(){
-	
-	var Logger *log.Logger
-	var fp *os.File
-	var err error
+func Test_logger(t *testing.T) {
 
-	logger.InitStdoutLogger()
-	defer EndLogger("stdout")
-	logger.LoggingLog("stdout","info","This message output to stdout")
+	sysadmLogger := New()
+	sysadmLogger.loggerFormat = "text"
+	sysadmLogger.InitStdoutLogger()
+	defer sysadmLogger.EndLogger("stdout")
+	sysadmLogger.LoggingLog("stdout", "info", "This message output to stdout")
 
-	fp, err = logger.ConfigLogfile("access","/var/log/bzhy_access.log")
+	_, err := sysadmLogger.OpenLogfile("access", "/var/log/bzhy_access.log")
 	if err != nil {
-		logger.LoggingLog("stdout","error",err)
+		sysadmLogger.LoggingLog("stdout", "error", err)
 	} else {
-		defer EndLogger("access")
+		defer sysadmLogger.EndLogger("access")
 	}
-	
-	logger.LoggingLog("access","info","This message output to access")
-	logger.Config.allstdout = false
 
-	logger.LoggingLog("access","info","This message output to access at allstdout is false")
-	logger.LoggingLog("stdout","info","This message output to stdout at allstdout is false")
+	sysadmLogger.LoggingLog("access", "info", "This message output to access")
+	sysadmLogger.allstdout = false
 
-	fp, err = logger.ConfigLogfile("access","/var/log/bzhy_error.log")
+	sysadmLogger.LoggingLog("access", "info", "This message output to access at allstdout is false")
+	sysadmLogger.LoggingLog("stdout", "info", "This message output to stdout at allstdout is false")
+
+	_, err = sysadmLogger.OpenLogfile("error", "/var/log/bzhy_error.log")
 	if err != nil {
-		logger.LoggingLog("stdout","error",err)
+		sysadmLogger.LoggingLog("stdout", "error", err)
 	} else {
-		defer EndLogger("error")
+		defer sysadmLogger.EndLogger("error")
 	}
-	
-	logger.Config.allstdout = true
-	logger.LoggingLog("error","error","This message output to access at allstdout is true")
-	logger.LoggingLog("error","error","This message output to stdout at allstdout is true")
 
-	logger.Config.allstdout = false
-	logger.LoggingLog("error","error","This message output to access at allstdout is false")
-	logger.LoggingLog("error","error","This message output to stdout at allstdout is false")
+	sysadmLogger.allstdout = true
+	sysadmLogger.LoggingLog("error", "error", "This message output to access at allstdout is true")
+	sysadmLogger.LoggingLog("error", "error", "This message output to stdout at allstdout is true")
 
-  os.Exit(0)
+	sysadmLogger.allstdout = false
+	sysadmLogger.LoggingLog("error", "error", "This message output to access at allstdout is false")
+	sysadmLogger.LoggingLog("error", "error", "This message output to stdout at allstdout is false")
+
+	os.Exit(0)
 }
