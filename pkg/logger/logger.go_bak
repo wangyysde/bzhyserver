@@ -32,7 +32,7 @@ import (
 configLogger struct used to save parameters for logger, such as access log file error log file
 */
 
-type SysadmLogger struct {
+type ConfigLogger struct {
 	//accessLoggerFile is the path of access log file ,if logger access log to a file
 	accessLoggerFile string
 	//errorLoggerFile is the path of error log file ,if logger error log to a file
@@ -59,10 +59,10 @@ type SysadmLogger struct {
 	allstdout bool
 }
 
-var levelList = [7]string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
+var ConfigLogLevel = [7]string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
 
 //Set global variable config and its default value
-var sysadmLogger = SysadmLogger{
+var Config = ConfigLogger{
 	accessLoggerFile: "",
 	errorLoggerFile:  "",
 
@@ -78,21 +78,21 @@ var sysadmLogger = SysadmLogger{
 	allstdout:    true,
 }
 
-func New() *SysadmLogger {
-	return &sysadmLogger
+func New() *ConfigLogger {
+	return &Config
 }
 
 /*
 * initated a logger to logging log message to stdout
  */
-func (sysadmLogger *SysadmLogger) InitStdoutLogger() (stdoutLogger *log.Logger, err error) {
+func InitStdoutLogger() (stdoutLogger *log.Logger, err error) {
 	stdoutLogger = log.New()
 	stdoutLogger.Out = os.Stdout
-	stdoutLogger = sysadmLogger.SetLogFormat(stdoutLogger, "stdout")
+	stdoutLogger = SetLogFormat(stdoutLogger, "stdout")
 
-	sysadmLogger.stdoutLogger = stdoutLogger
-	if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-		sysadmLogger.allstdout = true
+	Config.stdoutLogger = stdoutLogger
+	if Config.accessLogger == nil && Config.errorLogger == nil {
+		Config.allstdout = true
 	}
 
 	return stdoutLogger, nil
@@ -101,9 +101,9 @@ func (sysadmLogger *SysadmLogger) InitStdoutLogger() (stdoutLogger *log.Logger, 
 
 /*
 * Init logger enity for access or error.
-* before call this func, sysadmLoggerLogfile(logType, logFile) should be called
+* before call this func, ConfigLogfile(logType, logFile) should be called
  */
-func (sysadmLogger *SysadmLogger) InitLogger(logType string, toStdout bool) (logger *log.Logger, err error) {
+func InitLogger(logType string, toStdout bool) (logger *log.Logger, err error) {
 	err = nil
 	if strings.ToLower(logType) != "access" && strings.ToLower(logType) != "error" {
 		err = fmt.Errorf("LogType must be access or error.You input is: %s", logType)
@@ -111,31 +111,31 @@ func (sysadmLogger *SysadmLogger) InitLogger(logType string, toStdout bool) (log
 	}
 
 	if strings.ToLower(logType) == "access" {
-		if sysadmLogger.accessFp == nil {
-			err = fmt.Errorf("May be not set access log, you should call sysadmLoggerLogfile(%s, logFile) before call InitLogger", logType)
+		if Config.accessFp == nil {
+			err = fmt.Errorf("May be not set access log, you should call ConfigLogfile(%s, logFile) before call InitLogger", logType)
 			return nil, err
 		}
 		logger = log.New()
-		logger.Out = sysadmLogger.accessFp
-		logger = sysadmLogger.SetLogFormat(logger, logType)
-		sysadmLogger.accessLogger = logger
+		logger.Out = Config.accessFp
+		logger = SetLogFormat(logger, logType)
+		Config.accessLogger = logger
 		if toStdout {
-			sysadmLogger.allstdout = true
+			Config.allstdout = true
 		} else {
-			sysadmLogger.allstdout = false
+			Config.allstdout = false
 		}
 		return logger, nil
 	}
 
-	if sysadmLogger.errorFp == nil {
-		err = fmt.Errorf("May be not set error log, you should call sysadmLoggerLogfile(%s, logFile) before call InitLogger", logType)
+	if Config.errorFp == nil {
+		err = fmt.Errorf("May be not set error log, you should call ConfigLogfile(%s, logFile) before call InitLogger", logType)
 		return nil, err
 	}
 
 	logger = log.New()
-	logger.Out = sysadmLogger.errorFp
-	logger = sysadmLogger.SetLogFormat(logger, logType)
-	sysadmLogger.errorLogger = logger
+	logger.Out = Config.errorFp
+	logger = SetLogFormat(logger, logType)
+	Config.errorLogger = logger
 
 	return logger, nil
 }
@@ -145,13 +145,13 @@ func (sysadmLogger *SysadmLogger) InitLogger(logType string, toStdout bool) (log
 * EndLogger will close file descriptor of access or error
 * and reset logger of access or error to nil
  */
-func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
+func EndLogger(logType string) (err error) {
 	err = nil
 	var fp *os.File
 
 	switch strings.ToLower(logType) {
 	case "access":
-		fp = sysadmLogger.accessFp
+		fp = Config.accessFp
 		if fp != nil {
 			err = fp.Close()
 		} else {
@@ -159,16 +159,16 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
 		}
 
 		if err == nil {
-			sysadmLogger.accessFp = nil
-			sysadmLogger.accessLoggerFile = ""
-			sysadmLogger.accessLogger = nil
-			if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-				sysadmLogger.allstdout = true
+			Config.accessFp = nil
+			Config.accessLoggerFile = ""
+			Config.accessLogger = nil
+			if Config.accessLogger == nil && Config.errorLogger == nil {
+				Config.allstdout = true
 			}
 		}
 		break
 	case "error":
-		fp = sysadmLogger.errorFp
+		fp = Config.errorFp
 		if fp != nil {
 			err = fp.Close()
 		} else {
@@ -176,21 +176,21 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
 		}
 
 		if err == nil {
-			sysadmLogger.errorFp = nil
-			sysadmLogger.errorLogger = nil
-			sysadmLogger.errorLoggerFile = ""
-			if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-				sysadmLogger.allstdout = true
+			Config.errorFp = nil
+			Config.errorLogger = nil
+			Config.errorLoggerFile = ""
+			if Config.accessLogger == nil && Config.errorLogger == nil {
+				Config.allstdout = true
 			}
 		}
 		break
 	case "stdout":
-		if sysadmLogger.accessLogger != nil || sysadmLogger.errorLogger != nil {
+		if Config.accessLogger != nil || Config.errorLogger != nil {
 			err = fmt.Errorf("Access logger and Error logger should be end first")
 		}
 
 		if err == nil {
-			sysadmLogger.stdoutLogger = nil
+			Config.stdoutLogger = nil
 		}
 		break
 	default:
@@ -205,9 +205,9 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
 * set log formate to text or json and set loggerFormat
 * the fields of the struct of loggerFormat refer to :https://pkg.go.dev/github.com/sirupsen/logrus#JSONFormatter
  */
-func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType string) (logger *log.Logger) {
+func SetLogFormat(Logger *log.Logger, logType string) (logger *log.Logger) {
 	if strings.ToLower(logType) == "access" || strings.ToLower(logType) == "error" {
-		if strings.ToLower(sysadmLogger.loggerFormat) == "text" {
+		if strings.ToLower(Config.loggerFormat) == "text" {
 			Logger.SetFormatter(&log.TextFormatter{
 				ForceColors:               false, //Ref: https://pkg.go.dev/github.com/sirupsen/logrus#pkg-functions
 				DisableColors:             true,
@@ -216,19 +216,19 @@ func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType strin
 				EnvironmentOverrideColors: true,
 				DisableTimestamp:          false,
 				FullTimestamp:             true,
-				TimestampFormat:           sysadmLogger.dateFormat,
+				TimestampFormat:           Config.dateFormat,
 				DisableSorting:            true,
 				DisableLevelTruncation:    true,
 				PadLevelText:              true,
 			})
 		} else {
 			Logger.SetFormatter(&log.JSONFormatter{
-				TimestampFormat:  sysadmLogger.dateFormat,
+				TimestampFormat:  Config.dateFormat,
 				DisableTimestamp: false,
 			})
 		}
 	} else {
-		if strings.ToLower(sysadmLogger.loggerFormat) == "text" {
+		if strings.ToLower(Config.loggerFormat) == "text" {
 			Logger.SetFormatter(&log.TextFormatter{
 				ForceColors:               true, //Ref: https://pkg.go.dev/github.com/sirupsen/logrus#pkg-functions
 				DisableColors:             false,
@@ -237,14 +237,14 @@ func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType strin
 				EnvironmentOverrideColors: true,
 				DisableTimestamp:          false,
 				FullTimestamp:             true,
-				TimestampFormat:           sysadmLogger.dateFormat,
+				TimestampFormat:           Config.dateFormat,
 				DisableSorting:            true,
 				DisableLevelTruncation:    true,
 				PadLevelText:              true,
 			})
 		} else {
 			Logger.SetFormatter(&log.JSONFormatter{
-				TimestampFormat:  sysadmLogger.dateFormat,
+				TimestampFormat:  Config.dateFormat,
 				DisableTimestamp: false,
 			})
 		}
@@ -255,9 +255,9 @@ func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType strin
 }
 
 /*
-* set logger level to sysadmLogger.loggerLevel
+* set logger level to Config.loggerLevel
  */
-func (sysadmLogger *SysadmLogger) SetLoglevel(loggerLevel string, Logger *log.Logger) (logger *log.Logger) {
+func SetLoglevel(loggerLevel string, Logger *log.Logger) (logger *log.Logger) {
 
 	switch strings.ToLower(loggerLevel) {
 	case "panic":
@@ -289,11 +289,11 @@ func (sysadmLogger *SysadmLogger) SetLoglevel(loggerLevel string, Logger *log.Lo
 }
 
 /*
-* according to logType, sysadmLoggerLogfile set logFile to sysadmLogger.accessLoggerFile or sysadmLogger.errorLoggerFile
+* according to logType, ConfigLogfile set logFile to Config.accessLoggerFile or Config.errorLoggerFile
 * and set file descriptor to accessFp or errorFp if logFile can be opened.
 * to close the openned file on time, a defer function should be called following call this function if this return successful.
  */
-func (sysadmLogger *SysadmLogger) OpenLogfile(logType string, logFile string) (fp *os.File, err error) {
+func ConfigLogfile(logType string, logFile string) (fp *os.File, err error) {
 
 	err = nil
 	if strings.ToLower(logType) != "access" && strings.ToLower(logType) != "error" {
@@ -308,13 +308,13 @@ func (sysadmLogger *SysadmLogger) OpenLogfile(logType string, logFile string) (f
 	}
 
 	if strings.ToLower(logType) == "access" {
-		sysadmLogger.accessFp = fp
-		sysadmLogger.accessLoggerFile = logFile
-		_, err = sysadmLogger.InitLogger("access", sysadmLogger.allstdout)
+		Config.accessFp = fp
+		Config.accessLoggerFile = logFile
+		_, err = InitLogger("access", Config.allstdout)
 	} else {
-		sysadmLogger.errorFp = fp
-		sysadmLogger.errorLoggerFile = logFile
-		_, err = sysadmLogger.InitLogger("error", sysadmLogger.allstdout)
+		Config.errorFp = fp
+		Config.errorLoggerFile = logFile
+		_, err = InitLogger("error", Config.allstdout)
 	}
 
 	return fp, err
@@ -322,40 +322,40 @@ func (sysadmLogger *SysadmLogger) OpenLogfile(logType string, logFile string) (f
 
 /**
 * Logging a message to Logger
-* if the sysadmLogger.allstdout ,then logging the log messages to stdout
+* if the Config.allstdout ,then logging the log messages to stdout
  */
-func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, args ...interface{}) {
+func LoggingLog(logType string, logLevel string, args ...interface{}) {
 
 	var logger *log.Logger
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = Config.allstdout
 	logger = nil
 	stdLogger = nil
 
 	switch strings.ToLower(logType) {
 	case "access":
-		logger = sysadmLogger.accessLogger
+		logger = Config.accessLogger
 		break
 	case "error":
-		logger = sysadmLogger.errorLogger
+		logger = Config.errorLogger
 		break
 	case "stdout":
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	default:
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	}
 
 	if tostdout {
-		stdLogger = sysadmLogger.stdoutLogger
+		stdLogger = Config.stdoutLogger
 	}
 
 	found := -1
-	for i := 0; i < len(logLevel); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(ConfigLogLevel); i++ {
+		if strings.ToLower(logLevel) == ConfigLogLevel[i] {
 			found = i
 			break
 		}
@@ -366,11 +366,11 @@ func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, ar
 	}
 
 	if logger != nil {
-		logger = sysadmLogger.SetLoglevel(logLevel, logger)
+		logger = SetLoglevel(logLevel, logger)
 	}
 
 	if stdLogger != nil {
-		stdLogger = sysadmLogger.SetLoglevel(logLevel, stdLogger)
+		stdLogger = SetLoglevel(logLevel, stdLogger)
 	}
 	switch strings.ToLower(logLevel) {
 	case "panic":
@@ -434,40 +434,40 @@ func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, ar
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the Config.allstdout ,then logging the log messages to stdout
  */
-func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, format string, args ...interface{}) {
+func LoggingLogf(logType string, logLevel string, format string, args ...interface{}) {
 
 	var logger *log.Logger
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = Config.allstdout
 	logger = nil
 	stdLogger = nil
 
 	switch strings.ToLower(logType) {
 	case "access":
-		logger = sysadmLogger.accessLogger
+		logger = Config.accessLogger
 		break
 	case "error":
-		logger = sysadmLogger.errorLogger
+		logger = Config.errorLogger
 		break
 	case "stdout":
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	default:
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	}
 
 	if tostdout {
-		stdLogger = sysadmLogger.stdoutLogger
+		stdLogger = Config.stdoutLogger
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(ConfigLogLevel); i++ {
+		if strings.ToLower(logLevel) == ConfigLogLevel[i] {
 			found = i
 			break
 		}
@@ -478,7 +478,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 	}
 
 	if logger != nil {
-		logger = sysadmLogger.SetLoglevel(logLevel, logger)
+		logger = SetLoglevel(logLevel, logger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			logger.Panicf(format, args...)
@@ -505,7 +505,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 	}
 
 	if stdLogger != nil {
-		stdLogger = sysadmLogger.SetLoglevel(logLevel, stdLogger)
+		stdLogger = SetLoglevel(logLevel, stdLogger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			stdLogger.Panicf(format, args...)
@@ -534,40 +534,40 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the Config.allstdout ,then logging the log messages to stdout
  */
-func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, args ...interface{}) {
+func LoggingLogln(logType string, logLevel string, args ...interface{}) {
 
 	var logger *log.Logger
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = Config.allstdout
 	logger = nil
 	stdLogger = nil
 
 	switch strings.ToLower(logType) {
 	case "access":
-		logger = sysadmLogger.accessLogger
+		logger = Config.accessLogger
 		break
 	case "error":
-		logger = sysadmLogger.errorLogger
+		logger = Config.errorLogger
 		break
 	case "stdout":
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	default:
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	}
 
 	if tostdout {
-		stdLogger = sysadmLogger.stdoutLogger
+		stdLogger = Config.stdoutLogger
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(ConfigLogLevel); i++ {
+		if strings.ToLower(logLevel) == ConfigLogLevel[i] {
 			found = i
 			break
 		}
@@ -577,7 +577,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 		logLevel = "debug"
 	}
 	if logger != nil {
-		logger = sysadmLogger.SetLoglevel(logLevel, logger)
+		logger = SetLoglevel(logLevel, logger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			logger.Panicln(args...)
@@ -604,7 +604,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 	}
 
 	if stdLogger != nil {
-		stdLogger = sysadmLogger.SetLoglevel(logLevel, stdLogger)
+		stdLogger = SetLoglevel(logLevel, stdLogger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			stdLogger.Panicln(args...)
@@ -633,40 +633,40 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the Config.allstdout ,then logging the log messages to stdout
  */
-func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, fn log.LogFunction) {
+func LoggingLogFn(logType string, logLevel string, fn log.LogFunction) {
 
 	var logger *log.Logger
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = Config.allstdout
 	logger = nil
 	stdLogger = nil
 
 	switch strings.ToLower(logType) {
 	case "access":
-		logger = sysadmLogger.accessLogger
+		logger = Config.accessLogger
 		break
 	case "error":
-		logger = sysadmLogger.errorLogger
+		logger = Config.errorLogger
 		break
 	case "stdout":
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	default:
 		tostdout = false
-		logger = sysadmLogger.stdoutLogger
+		logger = Config.stdoutLogger
 	}
 
 	if tostdout {
-		stdLogger = sysadmLogger.stdoutLogger
+		stdLogger = Config.stdoutLogger
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(ConfigLogLevel); i++ {
+		if strings.ToLower(logLevel) == ConfigLogLevel[i] {
 			found = i
 			break
 		}
@@ -676,7 +676,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, 
 		logLevel = "debug"
 	}
 	if logger != nil {
-		logger = sysadmLogger.SetLoglevel(logLevel, logger)
+		logger = SetLoglevel(logLevel, logger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			logger.PanicFn(fn)
@@ -703,7 +703,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, 
 	}
 
 	if stdLogger != nil {
-		stdLogger = sysadmLogger.SetLoglevel(logLevel, stdLogger)
+		stdLogger = SetLoglevel(logLevel, stdLogger)
 		switch strings.ToLower(logLevel) {
 		case "panic":
 			stdLogger.PanicFn(fn)
