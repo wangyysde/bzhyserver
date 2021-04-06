@@ -25,22 +25,28 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	kingpin "gopkg.in/alecthomas/kingpin.v2" //https://github.com/alecthomas/kingpin    https://gopkg.in/alecthomas/kingpin.v2
+
+	"github.com/wangyysde/bzhyserver/pkg/config"
+	"github.com/wangyysde/bzhyserver/pkg/logger"
 )
 
 type Server struct {
-	context    context.Context
+	icontext   context.Context
 	shutdownFn context.CancelFunc
 
 	shutdownReason     string
 	shutdownInProgress bool
 
 	rootPath string
-	indexs   []string
+
+	nindexs []string
 
 	index   string
 	pidFile string
@@ -48,27 +54,33 @@ type Server struct {
 	r *gin.Engine
 }
 
+var (
+	a          = kingpin.New(filepath.Base(os.Args[0]), "A command-line "+config.DefaultConfigs.Progname+" application.")
+	configFile = a.Flag("config", "Configuration file path").Default(config.DefaultConfigs.DefaultConFile).String()
+	version    = a.Flag("version", "Show the version information for "+config.DefaultConfigs.Progname).Bool()
+)
+
 var Svr = new(Server)
 
 func init_serer() (ret int) {
 	r := gin.Default()
-//	r.SetAccLogHandler(WriteLog2Acclog)
-//	r.SetErrLogHandler(WriteLog2Errlog)
+	//	r.SetAccLogHandler(WriteLog2Acclog)
+	//	r.SetErrLogHandler(WriteLog2Errlog)
 
-/*
-	r.GET("/", GetHandler)
-	r.POST("/somePost", posting)
-	r.PUT("/somePut", putting)
-	r.DELETE("/someDelete", deleting)
-	r.PATCH("/somePatch", patching)
-	r.HEAD("/someHead", head)
-	r.OPTIONS("/someOptions", options)
+	/*
+		r.GET("/", GetHandler)
+		r.POST("/somePost", posting)
+		r.PUT("/somePut", putting)
+		r.DELETE("/someDelete", deleting)
+		r.PATCH("/somePatch", patching)
+		r.HEAD("/someHead", head)
+		r.OPTIONS("/someOptions", options)
 
-	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
-		logmsg := fmt.Sprintf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
-	}
+		gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+			logmsg := fmt.Sprintf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
+		}
 
-*/
+	*/
 
 	r.GET("/", func(c *gin.Context) {
 		time.Sleep(5 * time.Second)
@@ -95,16 +107,28 @@ func init_serer() (ret int) {
 }
 
 func main() {
+	sysadmLogger := logger.New()
+	sysadmLogger.LoggerFormat = "text"
+	sysadmLogger.InitStdoutLogger()
+	defer sysadmLogger.EndLogger("stdout")
+
+	a.HelpFlag.Short('h')
+	_, err := a.Parse(os.Args[1:])
+	if err != nil {
+		sysadmLogger.LoggingLogf("stdout", "info", "Unkown  commandline arguments:%s", err)
+		os.Exit(10001) //Error no: AABBB. AA: file seq,main is 1; BBB: error no
+	}
+
 	if ret := init_serer(); ret > 0 {
-		fmt.Sprintf("Starting the server ERROR")
+		fmt.Printf("Starting the server ERROR")
 	}
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	fmt.Sprintf("Shutting down server...")
-//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	fmt.Printf("Shutting down server...")
+	//	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	//defer cancel()
 

@@ -17,7 +17,7 @@
 #    
 
 GO = GO111MODULE=on go
-SERVER_GO_FILES ?= $(shell find ./src/server ! -name *_test.go  -name *.go -type f )
+SERVER_GO_FILES ?= $(shell find ./pkg/server ! -name *_test.go  -name *.go -type f )
 TEST_LOGGER_GO_FILES ?= $(shell find src/logger -name *_test.go  -type f )
 SH_FILES ?= $(shell find ./scripts -name *.sh)
 GOVERSION ?= $(shell go version)
