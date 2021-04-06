@@ -27,7 +27,7 @@ import (
 func Test_logger(t *testing.T) {
 
 	sysadmLogger := New()
-	sysadmLogger.loggerFormat = "text"
+	sysadmLogger.LoggerFormat = "text"
 	sysadmLogger.InitStdoutLogger()
 	defer sysadmLogger.EndLogger("stdout")
 	sysadmLogger.LoggingLog("stdout", "info", "This message output to stdout")
@@ -40,7 +40,7 @@ func Test_logger(t *testing.T) {
 	}
 
 	sysadmLogger.LoggingLog("access", "info", "This message output to access")
-	sysadmLogger.allstdout = false
+	sysadmLogger.Allstdout = false
 
 	sysadmLogger.LoggingLog("access", "info", "This message output to access at allstdout is false")
 	sysadmLogger.LoggingLog("stdout", "info", "This message output to stdout at allstdout is false")
@@ -52,11 +52,11 @@ func Test_logger(t *testing.T) {
 		defer sysadmLogger.EndLogger("error")
 	}
 
-	sysadmLogger.allstdout = true
+	sysadmLogger.Allstdout = true
 	sysadmLogger.LoggingLog("error", "error", "This message output to access at allstdout is true")
 	sysadmLogger.LoggingLog("error", "error", "This message output to stdout at allstdout is true")
 
-	sysadmLogger.allstdout = false
+	sysadmLogger.Allstdout = false
 	sysadmLogger.LoggingLog("error", "error", "This message output to access at allstdout is false")
 	sysadmLogger.LoggingLog("error", "error", "This message output to stdout at allstdout is false")
 

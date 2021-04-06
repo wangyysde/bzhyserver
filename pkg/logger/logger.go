@@ -51,12 +51,12 @@ type SysadmLogger struct {
 	stdoutLogger *log.Logger
 
 	//set log format for output
-	loggerFormat string
+	LoggerFormat string
 	//set date formate
-	dateFormat string
+	DateFormat string
 
-	//If all log message log to stdout ,then allstdout should be set to True
-	allstdout bool
+	//If all log message log to stdout ,then Allstdout should be set to True
+	Allstdout bool
 }
 
 var levelList = [7]string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
@@ -73,9 +73,9 @@ var sysadmLogger = SysadmLogger{
 	errorLogger:  nil,
 	stdoutLogger: nil,
 
-	loggerFormat: "Text",
-	dateFormat:   time.RFC3339, //Ref: https://studygolang.com/static/pkgdoc/pkg/time.htm#Time.Format
-	allstdout:    true,
+	LoggerFormat: "Text",
+	DateFormat:   time.RFC3339, //Ref: https://studygolang.com/static/pkgdoc/pkg/time.htm#Time.Format
+	Allstdout:    true,
 }
 
 func New() *SysadmLogger {
@@ -92,7 +92,7 @@ func (sysadmLogger *SysadmLogger) InitStdoutLogger() (stdoutLogger *log.Logger, 
 
 	sysadmLogger.stdoutLogger = stdoutLogger
 	if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-		sysadmLogger.allstdout = true
+		sysadmLogger.Allstdout = true
 	}
 
 	return stdoutLogger, nil
@@ -120,9 +120,9 @@ func (sysadmLogger *SysadmLogger) InitLogger(logType string, toStdout bool) (log
 		logger = sysadmLogger.SetLogFormat(logger, logType)
 		sysadmLogger.accessLogger = logger
 		if toStdout {
-			sysadmLogger.allstdout = true
+			sysadmLogger.Allstdout = true
 		} else {
-			sysadmLogger.allstdout = false
+			sysadmLogger.Allstdout = false
 		}
 		return logger, nil
 	}
@@ -163,7 +163,7 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
 			sysadmLogger.accessLoggerFile = ""
 			sysadmLogger.accessLogger = nil
 			if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-				sysadmLogger.allstdout = true
+				sysadmLogger.Allstdout = true
 			}
 		}
 		break
@@ -180,7 +180,7 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
 			sysadmLogger.errorLogger = nil
 			sysadmLogger.errorLoggerFile = ""
 			if sysadmLogger.accessLogger == nil && sysadmLogger.errorLogger == nil {
-				sysadmLogger.allstdout = true
+				sysadmLogger.Allstdout = true
 			}
 		}
 		break
@@ -207,7 +207,7 @@ func (sysadmLogger *SysadmLogger) EndLogger(logType string) (err error) {
  */
 func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType string) (logger *log.Logger) {
 	if strings.ToLower(logType) == "access" || strings.ToLower(logType) == "error" {
-		if strings.ToLower(sysadmLogger.loggerFormat) == "text" {
+		if strings.ToLower(sysadmLogger.LoggerFormat) == "text" {
 			Logger.SetFormatter(&log.TextFormatter{
 				ForceColors:               false, //Ref: https://pkg.go.dev/github.com/sirupsen/logrus#pkg-functions
 				DisableColors:             true,
@@ -216,19 +216,19 @@ func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType strin
 				EnvironmentOverrideColors: true,
 				DisableTimestamp:          false,
 				FullTimestamp:             true,
-				TimestampFormat:           sysadmLogger.dateFormat,
+				TimestampFormat:           sysadmLogger.DateFormat,
 				DisableSorting:            true,
 				DisableLevelTruncation:    true,
 				PadLevelText:              true,
 			})
 		} else {
 			Logger.SetFormatter(&log.JSONFormatter{
-				TimestampFormat:  sysadmLogger.dateFormat,
+				TimestampFormat:  sysadmLogger.DateFormat,
 				DisableTimestamp: false,
 			})
 		}
 	} else {
-		if strings.ToLower(sysadmLogger.loggerFormat) == "text" {
+		if strings.ToLower(sysadmLogger.LoggerFormat) == "text" {
 			Logger.SetFormatter(&log.TextFormatter{
 				ForceColors:               true, //Ref: https://pkg.go.dev/github.com/sirupsen/logrus#pkg-functions
 				DisableColors:             false,
@@ -237,14 +237,14 @@ func (sysadmLogger *SysadmLogger) SetLogFormat(Logger *log.Logger, logType strin
 				EnvironmentOverrideColors: true,
 				DisableTimestamp:          false,
 				FullTimestamp:             true,
-				TimestampFormat:           sysadmLogger.dateFormat,
+				TimestampFormat:           sysadmLogger.DateFormat,
 				DisableSorting:            true,
 				DisableLevelTruncation:    true,
 				PadLevelText:              true,
 			})
 		} else {
 			Logger.SetFormatter(&log.JSONFormatter{
-				TimestampFormat:  sysadmLogger.dateFormat,
+				TimestampFormat:  sysadmLogger.DateFormat,
 				DisableTimestamp: false,
 			})
 		}
@@ -310,11 +310,11 @@ func (sysadmLogger *SysadmLogger) OpenLogfile(logType string, logFile string) (f
 	if strings.ToLower(logType) == "access" {
 		sysadmLogger.accessFp = fp
 		sysadmLogger.accessLoggerFile = logFile
-		_, err = sysadmLogger.InitLogger("access", sysadmLogger.allstdout)
+		_, err = sysadmLogger.InitLogger("access", sysadmLogger.Allstdout)
 	} else {
 		sysadmLogger.errorFp = fp
 		sysadmLogger.errorLoggerFile = logFile
-		_, err = sysadmLogger.InitLogger("error", sysadmLogger.allstdout)
+		_, err = sysadmLogger.InitLogger("error", sysadmLogger.Allstdout)
 	}
 
 	return fp, err
@@ -322,7 +322,7 @@ func (sysadmLogger *SysadmLogger) OpenLogfile(logType string, logFile string) (f
 
 /**
 * Logging a message to Logger
-* if the sysadmLogger.allstdout ,then logging the log messages to stdout
+* if the sysadmLogger.Allstdout ,then logging the log messages to stdout
  */
 func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, args ...interface{}) {
 
@@ -330,7 +330,7 @@ func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, ar
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = sysadmLogger.Allstdout
 	logger = nil
 	stdLogger = nil
 
@@ -434,7 +434,7 @@ func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, ar
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the sysadmLogger.Allstdout ,then logging the log messages to stdout
  */
 func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, format string, args ...interface{}) {
 
@@ -442,7 +442,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = sysadmLogger.Allstdout
 	logger = nil
 	stdLogger = nil
 
@@ -534,7 +534,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the sysadmLogger.Allstdout ,then logging the log messages to stdout
  */
 func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, args ...interface{}) {
 
@@ -542,7 +542,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = sysadmLogger.Allstdout
 	logger = nil
 	stdLogger = nil
 
@@ -633,7 +633,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 
 /*
  * Logging a message to Logger
- * if the sysadmLogger.allstdout ,then logging the log messages to stdout
+ * if the sysadmLogger.Allstdout ,then logging the log messages to stdout
  */
 func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, fn log.LogFunction) {
 
@@ -641,7 +641,7 @@ func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, 
 	var tostdout bool
 	var stdLogger *log.Logger
 
-	tostdout = sysadmLogger.allstdout
+	tostdout = sysadmLogger.Allstdout
 	logger = nil
 	stdLogger = nil
 
