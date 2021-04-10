@@ -1,6 +1,6 @@
 #!/bin/bash
 currentpath=`pwd`
-dest="/usr/local/pipe"
+dest="/usr/local/sysadm"
 
 mkdir -p ${dest}
 mkdir -p ${dest}/{conf,bin,run,www}

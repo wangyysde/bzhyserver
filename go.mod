@@ -8,4 +8,5 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/sirupsen/logrus v1.8.1
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
+	gopkg.in/yaml.v2 v2.2.8
 )

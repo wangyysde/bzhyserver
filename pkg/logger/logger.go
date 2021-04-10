@@ -59,7 +59,7 @@ type SysadmLogger struct {
 	Allstdout bool
 }
 
-var levelList = [7]string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
+var LevelList = [7]string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
 
 //Set global variable config and its default value
 var sysadmLogger = SysadmLogger{
@@ -355,7 +355,7 @@ func (sysadmLogger *SysadmLogger) LoggingLog(logType string, logLevel string, ar
 
 	found := -1
 	for i := 0; i < len(logLevel); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+		if strings.ToLower(logLevel) == LevelList[i] {
 			found = i
 			break
 		}
@@ -466,8 +466,8 @@ func (sysadmLogger *SysadmLogger) LoggingLogf(logType string, logLevel string, f
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(LevelList); i++ {
+		if strings.ToLower(logLevel) == LevelList[i] {
 			found = i
 			break
 		}
@@ -566,8 +566,8 @@ func (sysadmLogger *SysadmLogger) LoggingLogln(logType string, logLevel string, 
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(LevelList); i++ {
+		if strings.ToLower(logLevel) == LevelList[i] {
 			found = i
 			break
 		}
@@ -665,8 +665,8 @@ func (sysadmLogger *SysadmLogger) LoggingLogFn(logType string, logLevel string, 
 	}
 
 	found := -1
-	for i := 0; i < len(levelList); i++ {
-		if strings.ToLower(logLevel) == levelList[i] {
+	for i := 0; i < len(LevelList); i++ {
+		if strings.ToLower(logLevel) == LevelList[i] {
 			found = i
 			break
 		}
