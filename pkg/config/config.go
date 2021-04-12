@@ -37,14 +37,6 @@ type appSetting struct {
 	ConFile    string //The path of the configure file for the software
 }
 
-/* DefaultConfigs for default configs of application */
-var DefaultAppSettings = appSetting{
-	Progname:   "sysadm",
-	Proversion: "0.21.03",
-	Prefix:     "/usr/local/sysadm",
-	ConFile:    "/usr/local/sysadm/config/sysadm.yaml",
-}
-
 //Struct for parsing server block of server file
 type server struct {
 	Listen   string `yaml: "listen"`
@@ -54,28 +46,12 @@ type server struct {
 	Indexs   string `yaml: "index"`
 }
 
-//Define default value for server settings
-var defaultServerSettings = server{
-	Listen:   "0.0.0.0",
-	Port:     8080,
-	RootPath: "html",
-	PidPath:  "/var/run/sysadm.pid",
-	Indexs:   "index.html index.htm",
-}
-
 //Struct for log block of config file
 type logger struct {
 	Loglevel  string `yaml: "loglevel"`
 	AccessLog string `yaml: "accesslog"`
 	ErrorLog  string `yaml: "errorlog"`
 	Logtype   string `yaml: "logtype"`
-}
-
-var defaultLoggerSettings = logger{
-	Loglevel:  "debug",
-	AccessLog: "logs/sysadm-access.log",
-	ErrorLog:  "logs/sysadm-error.log",
-	Logtype:   "text",
 }
 
 //Struct for runtime settings
