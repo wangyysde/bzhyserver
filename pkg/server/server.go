@@ -55,9 +55,9 @@ type Server struct {
 }
 
 var (
-	a          = kingpin.New(filepath.Base(os.Args[0]), "A command-line "+config.DefaultConfigs.Progname+" application.")
-	configFile = a.Flag("config", "Configuration file path").Default(config.DefaultConfigs.DefaultConFile).String()
-	version    = a.Flag("version", "Show the version information for "+config.DefaultConfigs.Progname).Bool()
+	a          = kingpin.New(filepath.Base(os.Args[0]), "A command-line "+config.DefaultAppSettings.Progname+" application.")
+	configFile = a.Flag("config", "Configuration file path").Default(config.DefaultAppSettings.ConFile).String()
+	version    = a.Flag("version", "Show the version information for "+config.DefaultAppSettings.Progname).Bool()
 )
 
 var Svr = new(Server)
